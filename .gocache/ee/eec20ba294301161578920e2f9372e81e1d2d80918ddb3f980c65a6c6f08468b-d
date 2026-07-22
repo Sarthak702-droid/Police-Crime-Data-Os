@@ -1,4 +1,0 @@
-./auth_service.go
-./case_service.go
-./chat_service.go
-./case_service_test.go
