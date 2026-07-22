@@ -2,6 +2,8 @@
 
 A production-grade REST API backend built in Go, implementing a secure, governed, and scalable crime analytics platform based on the Karnataka Police FIR database schema.
 
+> The current ER completion, new domain endpoints, police-focused intelligence features, and external AI provisioning requirements are documented in [`../docs/backend-db-ai-completion.md`](../docs/backend-db-ai-completion.md).
+
 ---
 
 ## Technical Stack
@@ -89,7 +91,7 @@ go version
    ```powershell
    go run cmd/server/main.go
    ```
-   *The server will boot up, perform schema auto-migrations for all 26 tables plus extensions, auto-seed default master records, and listen on `http://localhost:8080`.*
+   *The server will boot up, perform schema auto-migrations for all 26 tables plus extensions, auto-seed default master records, and listen on `http://localhost:8002`.*
 
 ---
 

@@ -7,10 +7,10 @@ import (
 // --- ORGANIZATION MASTERS ---
 
 type State struct {
-	StateID      int    `gorm:"primaryKey;column:StateID" json:"state_id"`
-	StateName    string `gorm:"column:StateName;type:varchar(100)" json:"state_name"`
+	StateID       int    `gorm:"primaryKey;column:StateID" json:"state_id"`
+	StateName     string `gorm:"column:StateName;type:varchar(100)" json:"state_name"`
 	NationalityID int    `gorm:"column:NationalityID" json:"nationality_id"`
-	Active       bool   `gorm:"column:Active;type:bit" json:"active"`
+	Active        bool   `gorm:"column:Active;type:bit" json:"active"`
 }
 
 func (State) TableName() string { return "State" }
@@ -26,11 +26,11 @@ type District struct {
 func (District) TableName() string { return "District" }
 
 type UnitType struct {
-	UnitTypeID   int    `gorm:"primaryKey;column:UnitTypeID" json:"unit_type_id"`
-	UnitTypeName string `gorm:"column:UnitTypeName;type:varchar(100)" json:"unit_type_name"`
+	UnitTypeID    int    `gorm:"primaryKey;column:UnitTypeID" json:"unit_type_id"`
+	UnitTypeName  string `gorm:"column:UnitTypeName;type:varchar(100)" json:"unit_type_name"`
 	CityDistState string `gorm:"column:CityDistState;type:varchar(50)" json:"city_dist_state"`
-	Hierarchy    int    `gorm:"column:Hierarchy" json:"hierarchy"`
-	Active       bool   `gorm:"column:Active;type:bit" json:"active"`
+	Hierarchy     int    `gorm:"column:Hierarchy" json:"hierarchy"`
+	Active        bool   `gorm:"column:Active;type:bit" json:"active"`
 }
 
 func (UnitType) TableName() string { return "UnitType" }
@@ -70,22 +70,22 @@ type Designation struct {
 func (Designation) TableName() string { return "Designation" }
 
 type Employee struct {
-	EmployeeID          int         `gorm:"primaryKey;column:EmployeeID" json:"employee_id"`
-	DistrictID          int         `gorm:"column:DistrictID" json:"district_id"`
-	UnitID              int         `gorm:"column:UnitID" json:"unit_id"`
-	RankID              int         `gorm:"column:RankID" json:"rank_id"`
-	DesignationID       int         `gorm:"column:DesignationID" json:"designation_id"`
-	KGID                string      `gorm:"column:KGID;type:varchar(50);uniqueIndex" json:"kgid"`
-	FirstName           string      `gorm:"column:FirstName;type:varchar(100)" json:"first_name"`
-	EmployeeDOB         time.Time   `gorm:"column:EmployeeDOB;type:date" json:"employee_dob"`
-	GenderID            int         `gorm:"column:GenderID" json:"gender_id"`
-	BloodGroupID        int         `gorm:"column:BloodGroupID" json:"blood_group_id"`
-	PhysicallyChallenged bool       `gorm:"column:PhysicallyChallenged;type:bit" json:"physically_challenged"`
-	AppointmentDate     time.Time   `gorm:"column:AppointmentDate;type:date" json:"appointment_date"`
-	District            District    `gorm:"foreignKey:DistrictID;references:DistrictID" json:"district,omitempty"`
-	Unit                Unit        `gorm:"foreignKey:UnitID;references:UnitID" json:"unit,omitempty"`
-	Rank                Rank        `gorm:"foreignKey:RankID;references:RankID" json:"rank,omitempty"`
-	Designation         Designation `gorm:"foreignKey:DesignationID;references:DesignationID" json:"designation,omitempty"`
+	EmployeeID           int         `gorm:"primaryKey;column:EmployeeID" json:"employee_id"`
+	DistrictID           int         `gorm:"column:DistrictID" json:"district_id"`
+	UnitID               int         `gorm:"column:UnitID" json:"unit_id"`
+	RankID               int         `gorm:"column:RankID" json:"rank_id"`
+	DesignationID        int         `gorm:"column:DesignationID" json:"designation_id"`
+	KGID                 string      `gorm:"column:KGID;type:varchar(50);uniqueIndex" json:"kgid"`
+	FirstName            string      `gorm:"column:FirstName;type:varchar(100)" json:"first_name"`
+	EmployeeDOB          time.Time   `gorm:"column:EmployeeDOB;type:date" json:"employee_dob"`
+	GenderID             int         `gorm:"column:GenderID" json:"gender_id"`
+	BloodGroupID         int         `gorm:"column:BloodGroupID" json:"blood_group_id"`
+	PhysicallyChallenged bool        `gorm:"column:PhysicallyChallenged;type:bit" json:"physically_challenged"`
+	AppointmentDate      time.Time   `gorm:"column:AppointmentDate;type:date" json:"appointment_date"`
+	District             District    `gorm:"foreignKey:DistrictID;references:DistrictID" json:"district,omitempty"`
+	Unit                 Unit        `gorm:"foreignKey:UnitID;references:UnitID" json:"unit,omitempty"`
+	Rank                 Rank        `gorm:"foreignKey:RankID;references:RankID" json:"rank,omitempty"`
+	Designation          Designation `gorm:"foreignKey:DesignationID;references:DesignationID" json:"designation,omitempty"`
 }
 
 func (Employee) TableName() string { return "Employee" }
@@ -144,11 +144,11 @@ type Section struct {
 func (Section) TableName() string { return "Section" }
 
 type CrimeHeadActSection struct {
-	CrimeHeadID int     `gorm:"primaryKey;column:CrimeHeadID" json:"crime_head_id"`
-	ActCode     string  `gorm:"primaryKey;column:ActCode;type:varchar(50)" json:"act_code"`
-	SectionCode string  `gorm:"primaryKey;column:SectionCode;type:varchar(50)" json:"section_code"`
+	CrimeHeadID int       `gorm:"primaryKey;column:CrimeHeadID" json:"crime_head_id"`
+	ActCode     string    `gorm:"primaryKey;column:ActCode;type:varchar(50)" json:"act_code"`
+	SectionCode string    `gorm:"primaryKey;column:SectionCode;type:varchar(50)" json:"section_code"`
 	CrimeHead   CrimeHead `gorm:"foreignKey:CrimeHeadID;references:CrimeHeadID" json:"crime_head,omitempty"`
-	Act         Act     `gorm:"foreignKey:ActCode;references:ActCode" json:"act,omitempty"`
+	Act         Act       `gorm:"foreignKey:ActCode;references:ActCode" json:"act,omitempty"`
 }
 
 func (CrimeHeadActSection) TableName() string { return "CrimeHeadActSection" }
@@ -198,55 +198,55 @@ func (Court) TableName() string { return "Court" }
 // --- CORE TRANSACTIONAL CORE TABLES ---
 
 type CaseMaster struct {
-	CaseMasterID        int              `gorm:"primaryKey;autoIncrement;column:CaseMasterID" json:"case_master_id"`
-	CrimeNo             string           `gorm:"column:CrimeNo;type:varchar(50);uniqueIndex" json:"crime_no"`
-	CaseNo              string           `gorm:"column:CaseNo;type:varchar(50)" json:"case_no"`
-	CrimeRegisteredDate time.Time        `gorm:"column:CrimeRegisteredDate;type:date" json:"crime_registered_date"`
-	PolicePersonID      int              `gorm:"column:PolicePersonID" json:"police_person_id"`
-	PoliceStationID     int              `gorm:"column:PoliceStationID;index" json:"police_station_id"`
-	CaseCategoryID      int              `gorm:"column:CaseCategoryID" json:"case_category_id"`
-	GravityOffenceID    int              `gorm:"column:GravityOffenceID" json:"gravity_offence_id"`
-	CrimeMajorHeadID    int              `gorm:"column:CrimeMajorHeadID" json:"crime_major_head_id"`
-	CrimeMinorHeadID    int              `gorm:"column:CrimeMinorHeadID" json:"crime_minor_head_id"`
-	CaseStatusID        int              `gorm:"column:CaseStatusID" json:"case_status_id"`
-	CourtID             int              `gorm:"column:CourtID" json:"court_id"`
-	IncidentFromDate    time.Time        `gorm:"column:IncidentFromDate;type:datetime" json:"incident_from_date"`
-	IncidentToDate      time.Time        `gorm:"column:IncidentToDate;type:datetime" json:"incident_to_date"`
-	InfoReceivedPSDate  time.Time        `gorm:"column:InfoReceivedPSDate;type:datetime" json:"info_received_ps_date"`
-	Latitude            float64          `gorm:"column:latitude;type:decimal(9,6)" json:"latitude"`
-	Longitude           float64          `gorm:"column:longitude;type:decimal(9,6)" json:"longitude"`
-	BriefFacts          string           `gorm:"column:BriefFacts;type:text" json:"brief_facts"`
-	PolicePerson        *Employee        `gorm:"foreignKey:PolicePersonID;references:EmployeeID" json:"police_person,omitempty"`
-	PoliceStation       *Unit            `gorm:"foreignKey:PoliceStationID;references:UnitID" json:"police_station,omitempty"`
-	CaseCategory        *CaseCategory    `gorm:"foreignKey:CaseCategoryID;references:CaseCategoryID" json:"case_category,omitempty"`
-	GravityOffence      *GravityOffence  `gorm:"foreignKey:GravityOffenceID;references:GravityOffenceID" json:"gravity_offence,omitempty"`
-	CrimeHead           *CrimeHead       `gorm:"foreignKey:CrimeMajorHeadID;references:CrimeHeadID" json:"crime_head,omitempty"`
-	CrimeSubHead        *CrimeSubHead    `gorm:"foreignKey:CrimeMinorHeadID;references:CrimeSubHeadID" json:"crime_sub_head,omitempty"`
-	CaseStatus          *CaseStatusMaster `gorm:"foreignKey:CaseStatusID;references:CaseStatusID" json:"case_status,omitempty"`
-	Court               *Court           `gorm:"foreignKey:CourtID;references:CourtID" json:"court,omitempty"`
-	Complainants        []ComplainantDetails `gorm:"foreignKey:CaseMasterID" json:"complainants,omitempty"`
-	Victims             []Victim         `gorm:"foreignKey:CaseMasterID" json:"victims,omitempty"`
-	AccusedList         []Accused        `gorm:"foreignKey:CaseMasterID" json:"accused_list,omitempty"`
-	Arrests             []ArrestSurrender `gorm:"foreignKey:CaseMasterID" json:"arrests,omitempty"`
+	CaseMasterID        int                     `gorm:"primaryKey;autoIncrement;column:CaseMasterID" json:"case_master_id"`
+	CrimeNo             string                  `gorm:"column:CrimeNo;type:varchar(50);uniqueIndex" json:"crime_no"`
+	CaseNo              string                  `gorm:"column:CaseNo;type:varchar(50);uniqueIndex:uidx_case_number_scope" json:"case_no"`
+	CrimeRegisteredDate time.Time               `gorm:"column:CrimeRegisteredDate;type:date;index:idx_case_registered" json:"crime_registered_date"`
+	PolicePersonID      int                     `gorm:"column:PolicePersonID" json:"police_person_id"`
+	PoliceStationID     int                     `gorm:"column:PoliceStationID;index;uniqueIndex:uidx_case_number_scope" json:"police_station_id"`
+	CaseCategoryID      int                     `gorm:"column:CaseCategoryID;uniqueIndex:uidx_case_number_scope" json:"case_category_id"`
+	GravityOffenceID    int                     `gorm:"column:GravityOffenceID" json:"gravity_offence_id"`
+	CrimeMajorHeadID    int                     `gorm:"column:CrimeMajorHeadID" json:"crime_major_head_id"`
+	CrimeMinorHeadID    int                     `gorm:"column:CrimeMinorHeadID" json:"crime_minor_head_id"`
+	CaseStatusID        int                     `gorm:"column:CaseStatusID;index" json:"case_status_id"`
+	CourtID             int                     `gorm:"column:CourtID" json:"court_id"`
+	IncidentFromDate    time.Time               `gorm:"column:IncidentFromDate;type:datetime" json:"incident_from_date"`
+	IncidentToDate      time.Time               `gorm:"column:IncidentToDate;type:datetime" json:"incident_to_date"`
+	InfoReceivedPSDate  time.Time               `gorm:"column:InfoReceivedPSDate;type:datetime" json:"info_received_ps_date"`
+	Latitude            float64                 `gorm:"column:latitude;type:decimal(9,6)" json:"latitude"`
+	Longitude           float64                 `gorm:"column:longitude;type:decimal(9,6)" json:"longitude"`
+	BriefFacts          string                  `gorm:"column:BriefFacts;type:text" json:"brief_facts"`
+	PolicePerson        *Employee               `gorm:"foreignKey:PolicePersonID;references:EmployeeID" json:"police_person,omitempty"`
+	PoliceStation       *Unit                   `gorm:"foreignKey:PoliceStationID;references:UnitID" json:"police_station,omitempty"`
+	CaseCategory        *CaseCategory           `gorm:"foreignKey:CaseCategoryID;references:CaseCategoryID" json:"case_category,omitempty"`
+	GravityOffence      *GravityOffence         `gorm:"foreignKey:GravityOffenceID;references:GravityOffenceID" json:"gravity_offence,omitempty"`
+	CrimeHead           *CrimeHead              `gorm:"foreignKey:CrimeMajorHeadID;references:CrimeHeadID" json:"crime_head,omitempty"`
+	CrimeSubHead        *CrimeSubHead           `gorm:"foreignKey:CrimeMinorHeadID;references:CrimeSubHeadID" json:"crime_sub_head,omitempty"`
+	CaseStatus          *CaseStatusMaster       `gorm:"foreignKey:CaseStatusID;references:CaseStatusID" json:"case_status,omitempty"`
+	Court               *Court                  `gorm:"foreignKey:CourtID;references:CourtID" json:"court,omitempty"`
+	Complainants        []ComplainantDetails    `gorm:"foreignKey:CaseMasterID" json:"complainants,omitempty"`
+	Victims             []Victim                `gorm:"foreignKey:CaseMasterID" json:"victims,omitempty"`
+	AccusedList         []Accused               `gorm:"foreignKey:CaseMasterID" json:"accused_list,omitempty"`
+	Arrests             []ArrestSurrender       `gorm:"foreignKey:CaseMasterID" json:"arrests,omitempty"`
 	ActsAssociated      []ActSectionAssociation `gorm:"foreignKey:CaseMasterID" json:"acts_associated,omitempty"`
-	Chargesheet         *ChargesheetDetails `gorm:"foreignKey:CaseMasterID" json:"chargesheet,omitempty"`
-	OccuranceTime       *Inv_OccuranceTime `gorm:"foreignKey:CaseMasterID" json:"occurance_time,omitempty"`
+	Chargesheet         *ChargesheetDetails     `gorm:"foreignKey:CaseMasterID" json:"chargesheet,omitempty"`
+	OccuranceTime       *Inv_OccuranceTime      `gorm:"foreignKey:CaseMasterID" json:"occurance_time,omitempty"`
 }
 
 func (CaseMaster) TableName() string { return "CaseMaster" }
 
 type ComplainantDetails struct {
-	ComplainantID   int              `gorm:"primaryKey;autoIncrement;column:ComplainantID" json:"complainant_id"`
-	CaseMasterID    int              `gorm:"column:CaseMasterID" json:"case_master_id"`
-	ComplainantName string           `gorm:"column:ComplainantName;type:varchar(150)" json:"complainant_name"`
-	AgeYear         int              `gorm:"column:AgeYear" json:"age_year"`
-	OccupationID    int              `gorm:"column:OccupationID" json:"occupation_id"`
-	ReligionID      int              `gorm:"column:ReligionID" json:"religion_id"`
-	CasteID         int              `gorm:"column:CasteID" json:"caste_id"`
-	GenderID        int              `gorm:"column:GenderID" json:"gender_id"`
+	ComplainantID   int               `gorm:"primaryKey;autoIncrement;column:ComplainantID" json:"complainant_id"`
+	CaseMasterID    int               `gorm:"column:CaseMasterID;index" json:"case_master_id"`
+	ComplainantName string            `gorm:"column:ComplainantName;type:varchar(150)" json:"complainant_name"`
+	AgeYear         int               `gorm:"column:AgeYear" json:"age_year"`
+	OccupationID    int               `gorm:"column:OccupationID" json:"occupation_id"`
+	ReligionID      int               `gorm:"column:ReligionID" json:"religion_id"`
+	CasteID         int               `gorm:"column:CasteID" json:"caste_id"`
+	GenderID        int               `gorm:"column:GenderID" json:"gender_id"`
 	Occupation      *OccupationMaster `gorm:"foreignKey:OccupationID;references:OccupationID" json:"occupation,omitempty"`
-	Religion        *ReligionMaster  `gorm:"foreignKey:ReligionID;references:ReligionID" json:"religion,omitempty"`
-	Caste           *CasteMaster     `gorm:"foreignKey:CasteID;references:CasteMasterID" json:"caste,omitempty"`
+	Religion        *ReligionMaster   `gorm:"foreignKey:ReligionID;references:ReligionID" json:"religion,omitempty"`
+	Caste           *CasteMaster      `gorm:"foreignKey:CasteID;references:CasteMasterID" json:"caste,omitempty"`
 }
 
 func (ComplainantDetails) TableName() string { return "ComplainantDetails" }
@@ -264,7 +264,7 @@ func (ActSectionAssociation) TableName() string { return "ActSectionAssociation"
 
 type Victim struct {
 	VictimMasterID int    `gorm:"primaryKey;autoIncrement;column:VictimMasterID" json:"victim_master_id"`
-	CaseMasterID   int    `gorm:"column:CaseMasterID" json:"case_master_id"`
+	CaseMasterID   int    `gorm:"column:CaseMasterID;index" json:"case_master_id"`
 	VictimName     string `gorm:"column:VictimName;type:varchar(150)" json:"victim_name"`
 	AgeYear        int    `gorm:"column:AgeYear" json:"age_year"`
 	GenderID       int    `gorm:"column:GenderID" json:"gender_id"`
@@ -275,8 +275,8 @@ func (Victim) TableName() string { return "Victim" }
 
 type Accused struct {
 	AccusedMasterID int    `gorm:"primaryKey;autoIncrement;column:AccusedMasterID" json:"accused_master_id"`
-	CaseMasterID    int    `gorm:"column:CaseMasterID" json:"case_master_id"`
-	AccusedName     string `gorm:"column:AccusedName;type:varchar(150)" json:"accused_name"`
+	CaseMasterID    int    `gorm:"column:CaseMasterID;index" json:"case_master_id"`
+	AccusedName     string `gorm:"column:AccusedName;type:varchar(150);index" json:"accused_name"`
 	AgeYear         int    `gorm:"column:AgeYear" json:"age_year"`
 	GenderID        int    `gorm:"column:GenderID" json:"gender_id"`
 	PersonID        string `gorm:"column:PersonID;type:varchar(10)" json:"person_code"` // A1, A2, A3...
@@ -285,25 +285,25 @@ type Accused struct {
 func (Accused) TableName() string { return "Accused" }
 
 type ArrestSurrender struct {
-	ArrestSurrenderID         int             `gorm:"primaryKey;autoIncrement;column:ArrestSurrenderID" json:"arrest_surrender_id"`
-	CaseMasterID              int             `gorm:"column:CaseMasterID" json:"case_master_id"`
-	ArrestSurrenderTypeID     int             `gorm:"column:ArrestSurrenderTypeID" json:"arrest_surrender_type_id"`
-	ArrestSurrenderDate       time.Time       `gorm:"column:ArrestSurrenderDate;type:date" json:"arrest_surrender_date"`
-	ArrestSurrenderStateId    int             `gorm:"column:ArrestSurrenderStateId" json:"arrest_surrender_state_id"`
-	ArrestSurrenderDistrictId int             `gorm:"column:ArrestSurrenderDistrictId" json:"arrest_surrender_district_id"`
-	PoliceStationID           int             `gorm:"column:PoliceStationID" json:"police_station_id"`
-	IOID                      int             `gorm:"column:IOID" json:"io_id"`
-	CourtID                   int             `gorm:"column:CourtID" json:"court_id"`
-	AccusedMasterID           int             `gorm:"column:AccusedMasterID" json:"accused_master_id"`
-	IsAccused                 bool            `gorm:"column:IsAccused;type:bit" json:"is_accused"`
-	IsComplainantAccused      bool            `gorm:"column:IsComplainantAccused;type:bit" json:"is_complainant_accused"`
-	State                     *State          `gorm:"foreignKey:ArrestSurrenderStateId;references:StateID" json:"state,omitempty"`
-	District                  *District       `gorm:"foreignKey:ArrestSurrenderDistrictId;references:DistrictID" json:"district,omitempty"`
-	PoliceStation             *Unit           `gorm:"foreignKey:PoliceStationID;references:UnitID" json:"police_station,omitempty"`
-	InvestigatingOfficer      *Employee       `gorm:"foreignKey:IOID;references:EmployeeID" json:"investigating_officer,omitempty"`
-	Court                     *Court          `gorm:"foreignKey:CourtID;references:CourtID" json:"court,omitempty"`
-	Accused                   *Accused        `gorm:"foreignKey:AccusedMasterID;references:AccusedMasterID" json:"accused,omitempty"`
-	AccusedLinks              []Accused       `gorm:"many2many:inv_arrestsurrenderaccused;foreignKey:ArrestSurrenderID;joinForeignKey:ArrestSurrenderID;References:AccusedMasterID;joinReferences:AccusedMasterID" json:"accused_links,omitempty"`
+	ArrestSurrenderID         int       `gorm:"primaryKey;autoIncrement;column:ArrestSurrenderID" json:"arrest_surrender_id"`
+	CaseMasterID              int       `gorm:"column:CaseMasterID;index" json:"case_master_id"`
+	ArrestSurrenderTypeID     int       `gorm:"column:ArrestSurrenderTypeID" json:"arrest_surrender_type_id"`
+	ArrestSurrenderDate       time.Time `gorm:"column:ArrestSurrenderDate;type:date" json:"arrest_surrender_date"`
+	ArrestSurrenderStateId    int       `gorm:"column:ArrestSurrenderStateId" json:"arrest_surrender_state_id"`
+	ArrestSurrenderDistrictId int       `gorm:"column:ArrestSurrenderDistrictId" json:"arrest_surrender_district_id"`
+	PoliceStationID           int       `gorm:"column:PoliceStationID" json:"police_station_id"`
+	IOID                      int       `gorm:"column:IOID" json:"io_id"`
+	CourtID                   int       `gorm:"column:CourtID" json:"court_id"`
+	AccusedMasterID           int       `gorm:"column:AccusedMasterID" json:"accused_master_id"`
+	IsAccused                 bool      `gorm:"column:IsAccused;type:bit" json:"is_accused"`
+	IsComplainantAccused      bool      `gorm:"column:IsComplainantAccused;type:bit" json:"is_complainant_accused"`
+	State                     *State    `gorm:"foreignKey:ArrestSurrenderStateId;references:StateID" json:"state,omitempty"`
+	District                  *District `gorm:"foreignKey:ArrestSurrenderDistrictId;references:DistrictID" json:"district,omitempty"`
+	PoliceStation             *Unit     `gorm:"foreignKey:PoliceStationID;references:UnitID" json:"police_station,omitempty"`
+	InvestigatingOfficer      *Employee `gorm:"foreignKey:IOID;references:EmployeeID" json:"investigating_officer,omitempty"`
+	Court                     *Court    `gorm:"foreignKey:CourtID;references:CourtID" json:"court,omitempty"`
+	Accused                   *Accused  `gorm:"foreignKey:AccusedMasterID;references:AccusedMasterID" json:"accused,omitempty"`
+	AccusedLinks              []Accused `gorm:"many2many:inv_arrestsurrenderaccused;foreignKey:ArrestSurrenderID;joinForeignKey:ArrestSurrenderID;References:AccusedMasterID;joinReferences:AccusedMasterID" json:"accused_links,omitempty"`
 }
 
 func (ArrestSurrender) TableName() string { return "ArrestSurrender" }
@@ -330,16 +330,16 @@ func (ChargesheetDetails) TableName() string { return "ChargesheetDetails" }
 // --- SPATIO-TEMPORAL EXTENSION TABLE ---
 
 type Inv_OccuranceTime struct {
-	OccurrenceID       int       `gorm:"primaryKey;autoIncrement;column:OccurrenceID" json:"occurrence_id"`
-	CaseMasterID       int       `gorm:"column:CaseMasterID;uniqueIndex" json:"case_master_id"`
-	IncidentFromTs     time.Time `gorm:"column:IncidentFromTs;type:datetime" json:"incident_from_ts"`
-	IncidentToTs       time.Time `gorm:"column:IncidentToTs;type:datetime" json:"incident_to_ts"`
-	InfoReceivedPSTs   time.Time `gorm:"column:InfoReceivedPSTs;type:datetime" json:"info_received_ps_ts"`
-	Latitude           float64   `gorm:"column:latitude;type:decimal(9,6)" json:"latitude"`
-	Longitude          float64   `gorm:"column:longitude;type:decimal(9,6)" json:"longitude"`
-	H3Cell             string    `gorm:"column:h3_cell;type:varchar(32)" json:"h3_cell"`
-	AddressText        string    `gorm:"column:address_text;type:text" json:"address_text"`
-	CreatedAt          time.Time `gorm:"column:created_at;type:datetime;default:CURRENT_TIMESTAMP" json:"created_at"`
+	OccurrenceID     int       `gorm:"primaryKey;autoIncrement;column:OccurrenceID" json:"occurrence_id"`
+	CaseMasterID     int       `gorm:"column:CaseMasterID;uniqueIndex" json:"case_master_id"`
+	IncidentFromTs   time.Time `gorm:"column:IncidentFromTs;type:datetime" json:"incident_from_ts"`
+	IncidentToTs     time.Time `gorm:"column:IncidentToTs;type:datetime" json:"incident_to_ts"`
+	InfoReceivedPSTs time.Time `gorm:"column:InfoReceivedPSTs;type:datetime" json:"info_received_ps_ts"`
+	Latitude         float64   `gorm:"column:latitude;type:decimal(9,6)" json:"latitude"`
+	Longitude        float64   `gorm:"column:longitude;type:decimal(9,6)" json:"longitude"`
+	H3Cell           string    `gorm:"column:h3_cell;type:varchar(32)" json:"h3_cell"`
+	AddressText      string    `gorm:"column:address_text;type:text" json:"address_text"`
+	CreatedAt        time.Time `gorm:"column:created_at;type:datetime;default:CURRENT_TIMESTAMP" json:"created_at"`
 }
 
 func (Inv_OccuranceTime) TableName() string { return "Inv_OccuranceTime" }
@@ -347,9 +347,9 @@ func (Inv_OccuranceTime) TableName() string { return "Inv_OccuranceTime" }
 // --- AUTHENTICATION HELPERS ---
 
 type UserCredentials struct {
-	EmployeeID   int       `gorm:"primaryKey;column:EmployeeID" json:"employee_id"`
-	PasswordHash string    `gorm:"column:PasswordHash;type:varchar(255)" json:"-"`
-	Employee     Employee  `gorm:"foreignKey:EmployeeID;references:EmployeeID" json:"employee,omitempty"`
+	EmployeeID   int      `gorm:"primaryKey;column:EmployeeID" json:"employee_id"`
+	PasswordHash string   `gorm:"column:PasswordHash;type:varchar(255)" json:"-"`
+	Employee     Employee `gorm:"foreignKey:EmployeeID;references:EmployeeID" json:"employee,omitempty"`
 }
 
 func (UserCredentials) TableName() string { return "UserCredentials" }
@@ -358,18 +358,72 @@ func (UserCredentials) TableName() string { return "UserCredentials" }
 
 type CaseDocument struct {
 	DocumentID   int       `gorm:"primaryKey;autoIncrement;column:DocumentID" json:"document_id"`
-	CaseMasterID int       `gorm:"column:CaseMasterID" json:"case_master_id"`
+	CaseMasterID int       `gorm:"column:CaseMasterID;index" json:"case_master_id"`
 	DocumentType string    `gorm:"column:document_type;type:varchar(50)" json:"document_type"`
 	StorageURI   string    `gorm:"column:storage_uri;type:text" json:"storage_uri"`
 	SHA256       string    `gorm:"column:sha256;type:char(64)" json:"sha256"`
 	LanguageCode string    `gorm:"column:language_code;type:varchar(16)" json:"language_code"`
 	PiiLevel     string    `gorm:"column:pii_level;type:varchar(20)" json:"pii_level"`
+	OriginalName string    `gorm:"column:original_name;type:varchar(255)" json:"original_name"`
+	ContentType  string    `gorm:"column:content_type;type:varchar(120)" json:"content_type"`
+	SizeBytes    int64     `gorm:"column:size_bytes" json:"size_bytes"`
 	CreatedBy    int       `gorm:"column:created_by" json:"created_by"`
 	CreatedAt    time.Time `gorm:"column:created_at;type:datetime;default:CURRENT_TIMESTAMP" json:"created_at"`
 	Creator      *Employee `gorm:"foreignKey:CreatedBy;references:EmployeeID" json:"creator,omitempty"`
 }
 
 func (CaseDocument) TableName() string { return "CaseDocument" }
+
+// EvidenceCustodyEvent is an append-only record of access and classification
+// events for a stored evidence document.
+type EvidenceCustodyEvent struct {
+	EventID    int       `gorm:"primaryKey;autoIncrement;column:EventID" json:"event_id"`
+	DocumentID int       `gorm:"column:DocumentID;index" json:"document_id"`
+	CaseID     int       `gorm:"column:CaseMasterID;index" json:"case_master_id"`
+	EventType  string    `gorm:"column:event_type;type:varchar(40)" json:"event_type"`
+	ActorID    int       `gorm:"column:actor_id" json:"actor_id"`
+	Notes      string    `gorm:"column:notes;type:text" json:"notes"`
+	CreatedAt  time.Time `gorm:"column:created_at;index" json:"created_at"`
+	Actor      *Employee `gorm:"foreignKey:ActorID;references:EmployeeID" json:"actor,omitempty"`
+}
+
+func (EvidenceCustodyEvent) TableName() string { return "EvidenceCustodyEvent" }
+
+// InvestigationTask turns advisory pending-action signals into assignable,
+// accountable police work with deadlines and completion history.
+type InvestigationTask struct {
+	TaskID         int        `gorm:"primaryKey;autoIncrement;column:TaskID" json:"task_id"`
+	CaseMasterID   int        `gorm:"column:CaseMasterID;index" json:"case_master_id"`
+	Title          string     `gorm:"column:title;type:varchar(180)" json:"title"`
+	Description    string     `gorm:"column:description;type:text" json:"description"`
+	Priority       string     `gorm:"column:priority;type:varchar(20);index" json:"priority"`
+	Status         string     `gorm:"column:status;type:varchar(20);index" json:"status"`
+	AssignedTo     int        `gorm:"column:assigned_to;index" json:"assigned_to"`
+	CreatedBy      int        `gorm:"column:created_by" json:"created_by"`
+	DueAt          time.Time  `gorm:"column:due_at;index" json:"due_at"`
+	CompletedAt    *time.Time `gorm:"column:completed_at" json:"completed_at,omitempty"`
+	CompletionNote string     `gorm:"column:completion_note;type:text" json:"completion_note"`
+	CreatedAt      time.Time  `gorm:"column:created_at" json:"created_at"`
+	UpdatedAt      time.Time  `gorm:"column:updated_at" json:"updated_at"`
+	Assignee       *Employee  `gorm:"foreignKey:AssignedTo;references:EmployeeID" json:"assignee,omitempty"`
+	Creator        *Employee  `gorm:"foreignKey:CreatedBy;references:EmployeeID" json:"creator,omitempty"`
+}
+
+func (InvestigationTask) TableName() string { return "InvestigationTask" }
+
+type InvestigationTaskEvent struct {
+	TaskEventID int       `gorm:"primaryKey;autoIncrement;column:TaskEventID" json:"task_event_id"`
+	TaskID      int       `gorm:"column:TaskID;index" json:"task_id"`
+	ActorID     int       `gorm:"column:actor_id" json:"actor_id"`
+	Action      string    `gorm:"column:action;type:varchar(40)" json:"action"`
+	FromStatus  string    `gorm:"column:from_status;type:varchar(20)" json:"from_status"`
+	ToStatus    string    `gorm:"column:to_status;type:varchar(20)" json:"to_status"`
+	Note        string    `gorm:"column:note;type:text" json:"note"`
+	CreatedAt   time.Time `gorm:"column:created_at;index" json:"created_at"`
+	Actor       *Employee `gorm:"foreignKey:ActorID;references:EmployeeID" json:"actor,omitempty"`
+}
+
+func (InvestigationTaskEvent) TableName() string { return "InvestigationTaskEvent" }
 
 type ConversationSession struct {
 	SessionID    string             `gorm:"primaryKey;column:SessionID;type:varchar(64)" json:"session_id"`
@@ -385,12 +439,12 @@ type ConversationSession struct {
 func (ConversationSession) TableName() string { return "ConversationSession" }
 
 type ConversationTurn struct {
-	TurnID      string    `gorm:"primaryKey;column:TurnID;type:varchar(64)" json:"turn_id"`
-	SessionID   string    `gorm:"column:SessionID;type:varchar(64)" json:"session_id"`
-	Speaker     string    `gorm:"column:speaker;type:varchar(20)" json:"speaker"` // user, bot
-	Content     string    `gorm:"column:content;type:text" json:"content"`
-	CitationJSON string   `gorm:"column:citation_json;type:text" json:"citation_json"` // JSON string
-	CreatedAt   time.Time `gorm:"column:created_at;type:datetime;default:CURRENT_TIMESTAMP" json:"created_at"`
+	TurnID       string    `gorm:"primaryKey;column:TurnID;type:varchar(64)" json:"turn_id"`
+	SessionID    string    `gorm:"column:SessionID;type:varchar(64);index" json:"session_id"`
+	Speaker      string    `gorm:"column:speaker;type:varchar(20)" json:"speaker"` // user, bot
+	Content      string    `gorm:"column:content;type:text" json:"content"`
+	CitationJSON string    `gorm:"column:citation_json;type:text" json:"citation_json"` // JSON string
+	CreatedAt    time.Time `gorm:"column:created_at;type:datetime;default:CURRENT_TIMESTAMP" json:"created_at"`
 }
 
 func (ConversationTurn) TableName() string { return "ConversationTurn" }
@@ -418,3 +472,38 @@ type RefreshToken struct {
 }
 
 func (RefreshToken) TableName() string { return "RefreshToken" }
+
+// FIRSequence allocates case serial numbers atomically per police station,
+// case category and year. Gaps are acceptable; duplicate FIR numbers are not.
+type FIRSequence struct {
+	PoliceStationID int       `gorm:"primaryKey;column:PoliceStationID" json:"police_station_id"`
+	CaseCategoryID  int       `gorm:"primaryKey;column:CaseCategoryID" json:"case_category_id"`
+	Year            int       `gorm:"primaryKey;column:Year" json:"year"`
+	CurrentSerial   int       `gorm:"column:CurrentSerial;not null" json:"current_serial"`
+	UpdatedAt       time.Time `gorm:"column:UpdatedAt;not null" json:"updated_at"`
+}
+
+func (FIRSequence) TableName() string { return "FIRSequence" }
+
+// EvidenceTrail is the machine-readable provenance envelope for a generated
+// answer or decision-support result. It intentionally stores identifiers and
+// hashes rather than unrestricted copies of sensitive source records.
+type EvidenceTrail struct {
+	EvidenceTrailID string    `gorm:"primaryKey;column:EvidenceTrailID;type:varchar(64)" json:"evidence_trail_id"`
+	SessionID       string    `gorm:"column:SessionID;type:varchar(64);index" json:"session_id"`
+	TurnID          string    `gorm:"column:TurnID;type:varchar(64);index" json:"turn_id"`
+	UserID          int       `gorm:"column:UserID;index" json:"user_id"`
+	UnitID          int       `gorm:"column:UnitID;index" json:"unit_id"`
+	LanguageCode    string    `gorm:"column:LanguageCode;type:varchar(16)" json:"language_code"`
+	Intent          string    `gorm:"column:Intent;type:varchar(80)" json:"intent"`
+	ToolCallsJSON   string    `gorm:"column:ToolCallsJSON;type:text" json:"tool_calls_json"`
+	ResultIDsJSON   string    `gorm:"column:ResultIDsJSON;type:text" json:"result_ids_json"`
+	ModelName       string    `gorm:"column:ModelName;type:varchar(120)" json:"model_name"`
+	PromptVersion   string    `gorm:"column:PromptVersion;type:varchar(40)" json:"prompt_version"`
+	Confidence      float64   `gorm:"column:Confidence" json:"confidence"`
+	ResponseHash    string    `gorm:"column:ResponseHash;type:char(64)" json:"response_hash"`
+	RedactionsJSON  string    `gorm:"column:RedactionsJSON;type:text" json:"redactions_json"`
+	CreatedAt       time.Time `gorm:"column:CreatedAt;index;not null" json:"created_at"`
+}
+
+func (EvidenceTrail) TableName() string { return "EvidenceTrail" }

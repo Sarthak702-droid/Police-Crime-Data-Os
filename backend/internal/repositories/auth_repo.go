@@ -1,7 +1,9 @@
 package repositories
 
 import (
+	"crypto/sha256"
 	"errors"
+	"fmt"
 
 	"backend/internal/models"
 
@@ -50,12 +52,13 @@ func (r *AuthRepository) CreateEmployee(emp *models.Employee) error {
 }
 
 func (r *AuthRepository) CreateRefreshToken(rt *models.RefreshToken) error {
+	rt.Token = refreshTokenDigest(rt.Token)
 	return r.db.Create(rt).Error
 }
 
 func (r *AuthRepository) GetRefreshToken(token string) (*models.RefreshToken, error) {
 	var rt models.RefreshToken
-	err := r.db.Where("token = ?", token).First(&rt).Error
+	err := r.db.Where("token = ?", refreshTokenDigest(token)).First(&rt).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
@@ -66,8 +69,10 @@ func (r *AuthRepository) GetRefreshToken(token string) (*models.RefreshToken, er
 }
 
 func (r *AuthRepository) DeleteRefreshToken(token string) error {
-	return r.db.Where("token = ?", token).Delete(&models.RefreshToken{}).Error
+	return r.db.Where("token = ?", refreshTokenDigest(token)).Delete(&models.RefreshToken{}).Error
 }
+
+func refreshTokenDigest(token string) string { return fmt.Sprintf("%x", sha256.Sum256([]byte(token))) }
 
 func (r *AuthRepository) GetEmployeeByID(empID int) (*models.Employee, error) {
 	var emp models.Employee

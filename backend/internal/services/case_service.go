@@ -29,11 +29,10 @@ func (s *CaseService) CreateCase(c *models.CaseMaster, districtID int) error {
 	}
 
 	// 1. Generate running serial number
-	lastSerial, err := s.repo.GetLastSerialNo(c.PoliceStationID, c.CaseCategoryID, year)
+	serialNo, err := s.repo.AllocateSerial(c.PoliceStationID, c.CaseCategoryID, year)
 	if err != nil {
-		return fmt.Errorf("failed to fetch running serial: %w", err)
+		return fmt.Errorf("failed to allocate running serial: %w", err)
 	}
-	serialNo := lastSerial + 1
 
 	// 2. Resolve Category Code
 	categoryCode := 1 // Default to FIR (1)

@@ -46,6 +46,7 @@ func TestCreateCaseAndTimeline(t *testing.T) {
 		&models.CasteMaster{},
 		&models.ReligionMaster{},
 		&models.OccupationMaster{},
+		&models.FIRSequence{},
 	)
 	if err != nil {
 		t.Fatalf("failed to auto-migrate: %v", err)
@@ -78,12 +79,12 @@ func TestCreateCaseAndTimeline(t *testing.T) {
 		GravityOffenceID:    1,
 		CrimeMajorHeadID:    1,
 		CrimeMinorHeadID:    1,
-		IncidentFromDate:   time.Date(2026, 7, 4, 22, 0, 0, 0, time.UTC),
-		IncidentToDate:     time.Date(2026, 7, 4, 23, 0, 0, 0, time.UTC),
-		InfoReceivedPSDate: time.Date(2026, 7, 5, 8, 0, 0, 0, time.UTC),
-		BriefFacts:         "House breaking theft at night",
-		OccuranceTime:      occurrence,
-		Complainants:       []models.ComplainantDetails{complainant},
+		IncidentFromDate:    time.Date(2026, 7, 4, 22, 0, 0, 0, time.UTC),
+		IncidentToDate:      time.Date(2026, 7, 4, 23, 0, 0, 0, time.UTC),
+		InfoReceivedPSDate:  time.Date(2026, 7, 5, 8, 0, 0, 0, time.UTC),
+		BriefFacts:          "House breaking theft at night",
+		OccuranceTime:       occurrence,
+		Complainants:        []models.ComplainantDetails{complainant},
 	}
 
 	// 5. Test Case Creation & Serial Number Formatting

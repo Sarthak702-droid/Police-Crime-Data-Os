@@ -66,10 +66,15 @@ func main() {
 		&models.Inv_OccuranceTime{},
 		&models.UserCredentials{},
 		&models.CaseDocument{},
+		&models.EvidenceCustodyEvent{},
+		&models.InvestigationTask{},
+		&models.InvestigationTaskEvent{},
 		&models.ConversationSession{},
 		&models.ConversationTurn{},
 		&models.AuditEvent{},
 		&models.RefreshToken{},
+		&models.FIRSequence{},
+		&models.EvidenceTrail{},
 	)
 	if err != nil {
 		log.Fatalf("Auto-migration failed: %v", err)
@@ -85,20 +90,43 @@ func main() {
 	partyRepo := repositories.NewPartyRepository(db)
 	chatRepo := repositories.NewChatRepository(db)
 	analyticsRepo := repositories.NewAnalyticsRepository(db)
+	domainRepo := repositories.NewDomainRepository(db)
 
 	// 6. Initialize Services
 	authSvc := services.NewAuthService(authRepo, cfg)
 	caseSvc := services.NewCaseService(caseRepo, partyRepo)
 	chatSvc := services.NewChatService(chatRepo, caseRepo, analyticsRepo)
+	intelligenceSvc := services.NewIntelligenceService(analyticsRepo)
+	if cfg.AIEnabled {
+		geminiClient := services.NewGeminiClient(cfg.AIBaseURL, cfg.AIModel, cfg.AIAPIKey)
+		sarvamClient := services.NewSarvamClient(cfg.TranslationBaseURL, cfg.SarvamAPIKey)
+		chatSvc.SetOrchestrator(services.NewGeminiOrchestrator(geminiClient, sarvamClient, caseRepo, caseSvc, analyticsRepo, intelligenceSvc, cfg.AIModel))
+		log.Printf("Governed AI orchestration enabled with model %s", cfg.AIModel)
+	}
 
 	// 7. Initialize Handlers
 	authHandler := handlers.NewAuthHandler(authSvc)
 	caseHandler := handlers.NewCaseHandler(caseSvc)
 	chatHandler := handlers.NewChatHandler(chatSvc)
-	analyticsHandler := handlers.NewAnalyticsHandler(analyticsRepo)
+	analyticsHandler := handlers.NewAnalyticsHandler(analyticsRepo, intelligenceSvc)
+	domainHandler := handlers.NewDomainHandler(domainRepo)
+	var retrievalHandler *handlers.RetrievalHandler
+	if cfg.EmbeddingBaseURL != "" && cfg.SearchBaseURL != "" {
+		retrievalSvc := services.NewRetrievalService(services.NewEmbeddingClient(cfg.EmbeddingBaseURL), services.NewOpenSearchClient(cfg.SearchBaseURL, cfg.SearchIndex, cfg.SearchUsername, cfg.SearchPassword), caseRepo)
+		retrievalHandler = handlers.NewRetrievalHandler(retrievalSvc)
+	}
+	var evidenceHandler *handlers.EvidenceHandler
+	if cfg.ObjectStoreEndpoint != "" && cfg.ObjectStoreAccessKey != "" && cfg.ObjectStoreSecretKey != "" {
+		store := services.NewS3ObjectStore(cfg.ObjectStoreEndpoint, cfg.ObjectStoreAccessKey, cfg.ObjectStoreSecretKey, cfg.ObjectStoreBucket, cfg.ObjectStoreRegion)
+		evidenceHandler = handlers.NewEvidenceHandler(services.NewEvidenceStorageService(store, domainRepo))
+	}
+	var graphSyncHandler *handlers.GraphSyncHandler
+	if cfg.GraphBaseURL != "" && cfg.GraphPassword != "" {
+		graphSyncHandler = handlers.NewGraphSyncHandler(services.NewGraphSyncService(services.NewNeo4jClient(cfg.GraphBaseURL, cfg.GraphUsername, cfg.GraphPassword), caseRepo))
+	}
 
 	// 8. Setup Routing
-	router := routes.SetupRouter(cfg, db, authHandler, caseHandler, chatHandler, analyticsHandler)
+	router := routes.SetupRouter(cfg, db, authHandler, caseHandler, chatHandler, analyticsHandler, domainHandler, retrievalHandler, evidenceHandler, graphSyncHandler)
 
 	// 9. Start Server
 	serverAddr := fmt.Sprintf(":%s", cfg.Port)

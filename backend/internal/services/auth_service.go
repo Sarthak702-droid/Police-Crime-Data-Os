@@ -32,6 +32,9 @@ type AuthClaims struct {
 	Designation   string `json:"designation"`
 	UnitID        int    `json:"unit_id"`
 	DistrictID    int    `json:"district_id"`
+	RealmAccess   struct {
+		Roles []string `json:"roles"`
+	} `json:"realm_access,omitempty"`
 	jwt.RegisteredClaims
 }
 

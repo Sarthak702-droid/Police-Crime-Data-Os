@@ -40,7 +40,11 @@ func SecurityHeadersMiddleware() gin.HandlerFunc {
 		c.Writer.Header().Set("X-Content-Type-Options", "nosniff")
 		c.Writer.Header().Set("X-Frame-Options", "DENY")
 		c.Writer.Header().Set("Referrer-Policy", "no-referrer")
-		c.Writer.Header().Set("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none'")
+		if strings.HasPrefix(c.Request.URL.Path, "/api/") {
+			c.Writer.Header().Set("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none'")
+		} else {
+			c.Writer.Header().Set("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'")
+		}
 		c.Writer.Header().Set("Cache-Control", "no-store")
 		if c.Request.TLS != nil {
 			c.Writer.Header().Set("Strict-Transport-Security", "max-age=31536000; includeSubDomains")

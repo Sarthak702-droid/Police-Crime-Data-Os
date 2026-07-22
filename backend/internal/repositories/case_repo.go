@@ -7,6 +7,7 @@ import (
 	"backend/internal/models"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type CaseRepository struct {
@@ -201,4 +202,39 @@ func (r *CaseRepository) GetLastSerialNo(policeStationID int, caseCategoryID int
 		Count(&count).Error
 
 	return int(count), err
+}
+
+// AllocateSerial increments and returns the station/category/year sequence in
+// one database statement. This prevents concurrent FIR registrations from
+// receiving the same number, which a COUNT-based allocator cannot guarantee.
+func (r *CaseRepository) AllocateSerial(policeStationID int, caseCategoryID int, year int) (int, error) {
+	sequence := models.FIRSequence{
+		PoliceStationID: policeStationID,
+		CaseCategoryID:  caseCategoryID,
+		Year:            year,
+		CurrentSerial:   1,
+		UpdatedAt:       time.Now().UTC(),
+	}
+
+	err := r.db.Clauses(clause.OnConflict{
+		Columns: []clause.Column{
+			{Name: "PoliceStationID"},
+			{Name: "CaseCategoryID"},
+			{Name: "Year"},
+		},
+		DoUpdates: clause.Assignments(map[string]interface{}{
+			"CurrentSerial": gorm.Expr("CurrentSerial + 1"),
+			"UpdatedAt":     time.Now().UTC(),
+		}),
+	}).Create(&sequence).Error
+	if err != nil {
+		return 0, err
+	}
+
+	err = r.db.Where("PoliceStationID = ? AND CaseCategoryID = ? AND Year = ?", policeStationID, caseCategoryID, year).
+		First(&sequence).Error
+	if err != nil {
+		return 0, err
+	}
+	return sequence.CurrentSerial, nil
 }

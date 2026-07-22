@@ -1,7 +1,11 @@
 package handlers
 
 import (
+	"crypto/sha256"
+	"fmt"
+	"io"
 	"net/http"
+	"time"
 
 	"backend/internal/services"
 	"backend/internal/utils"
@@ -21,6 +25,55 @@ type QueryRequest struct {
 	SessionID string `json:"session_id" binding:"required"`
 	Message   string `json:"message" binding:"required"`
 	Language  string `json:"language"`
+}
+
+type TranslateRequest struct {
+	Input              string `json:"input" binding:"required"`
+	SourceLanguageCode string `json:"source_language_code"`
+	TargetLanguageCode string `json:"target_language_code" binding:"required"`
+}
+
+func (h *ChatHandler) Translate(c *gin.Context) {
+	var req TranslateRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		utils.SendBadRequest(c, "Invalid translation request", err)
+		return
+	}
+	result, err := h.service.Translate(c.Request.Context(), req.Input, req.SourceLanguageCode, req.TargetLanguageCode)
+	if err != nil {
+		utils.SendError(c, http.StatusBadGateway, "Translation service unavailable", "")
+		return
+	}
+	utils.SendSuccess(c, http.StatusOK, "Text translated", result)
+}
+
+func (h *ChatHandler) SpeechToText(c *gin.Context) {
+	fileHeader, err := c.FormFile("file")
+	if err != nil {
+		utils.SendError(c, http.StatusBadRequest, "Audio file is required", "")
+		return
+	}
+	if fileHeader.Size <= 0 || fileHeader.Size > 10<<20 {
+		utils.SendError(c, http.StatusRequestEntityTooLarge, "Audio file must be between 1 byte and 10 MB", "")
+		return
+	}
+	file, err := fileHeader.Open()
+	if err != nil {
+		utils.SendError(c, http.StatusBadRequest, "Unable to read audio file", "")
+		return
+	}
+	defer file.Close()
+	audio, err := io.ReadAll(io.LimitReader(file, (10<<20)+1))
+	if err != nil || len(audio) > 10<<20 {
+		utils.SendError(c, http.StatusRequestEntityTooLarge, "Audio file exceeds 10 MB", "")
+		return
+	}
+	result, err := h.service.Transcribe(c.Request.Context(), fileHeader.Filename, audio, c.PostForm("language_code"), c.PostForm("mode"))
+	if err != nil {
+		utils.SendError(c, http.StatusBadGateway, "Speech service unavailable", "")
+		return
+	}
+	utils.SendSuccess(c, http.StatusOK, "Speech transcribed", result)
 }
 
 func (h *ChatHandler) Query(c *gin.Context) {
@@ -43,7 +96,7 @@ func (h *ChatHandler) Query(c *gin.Context) {
 		lang = "en-IN"
 	}
 
-	response, err := h.service.ProcessQuery(req.SessionID, claims.EmployeeID, claims.UnitID, req.Message, lang)
+	response, err := h.service.ProcessQuery(c.Request.Context(), req.SessionID, claims.EmployeeID, claims.UnitID, claims.RankHierarchy, req.Message, lang)
 	if err != nil {
 		utils.SendInternalServerError(c, "Failed to process chat query", err)
 		return
@@ -113,16 +166,38 @@ func (h *ChatHandler) ExportPDF(c *gin.Context) {
 		return
 	}
 
-	// In a real application, we would generate a PDF binary here.
-	// For production-ready mock verification, we assemble a structured PDF-export schema
-	// and return it, indicating the file was saved or streamed.
 	pdfName := "conversation_export_" + sessionID + ".pdf"
+	lines := []string{
+		"Session: " + sessionID,
+		"Exported at: " + time.Now().UTC().Format(time.RFC3339),
+		"Officer: " + claims.KGID,
+		"",
+	}
+	for _, turn := range turns {
+		lines = append(lines, fmt.Sprintf("[%s] %s", turn.Speaker, turn.CreatedAt.UTC().Format(time.RFC3339)), turn.Content, "")
+	}
+	pdf := utils.BuildTextPDF("Crime Analytics Conversation Export", lines)
+	digest := fmt.Sprintf("%x", sha256.Sum256(pdf))
+	c.Header("Content-Type", "application/pdf")
+	c.Header("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, pdfName))
+	c.Header("X-Content-SHA256", digest)
+	c.Data(http.StatusOK, "application/pdf", pdf)
+}
 
-	utils.SendSuccess(c, http.StatusOK, "PDF export initiated successfully", gin.H{
-		"export_filename": pdfName,
-		"total_turns":     len(turns),
-		"status":          "generated",
-		"checksum":        "sha256-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-		"download_uri":    "/static/exports/" + pdfName,
-	})
+func (h *ChatHandler) GetEvidenceTrails(c *gin.Context) {
+	sessionID := c.Param("session_id")
+	claims, ok := claimsFromContext(c)
+	if !ok {
+		return
+	}
+	rows, err := h.service.GetEvidenceTrailsForUser(sessionID, claims.EmployeeID)
+	if err != nil {
+		utils.SendInternalServerError(c, "Failed to retrieve evidence trails", err)
+		return
+	}
+	utils.SendSuccess(c, http.StatusOK, "Evidence trails retrieved", rows)
+}
+
+func (h *ChatHandler) GetToolCatalog(c *gin.Context) {
+	utils.SendSuccess(c, http.StatusOK, "AI tool allowlist retrieved", services.AvailableAITools())
 }

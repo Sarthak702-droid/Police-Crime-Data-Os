@@ -14,6 +14,10 @@ import (
 )
 
 func AuthMiddleware(cfg *config.Config) gin.HandlerFunc {
+	var oidcKeys *jwksCache
+	if cfg.AuthMode == "oidc" {
+		oidcKeys = newJWKSCache(cfg.OIDCJWKSURL)
+	}
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
@@ -32,14 +36,20 @@ func AuthMiddleware(cfg *config.Config) gin.HandlerFunc {
 		tokenString := parts[1]
 		claims := &services.AuthClaims{}
 
-		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
-			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, errors.New("unexpected signing method")
-			}
-			return []byte(cfg.JWTSecret), nil
-		})
+		var token *jwt.Token
+		var err error
+		if cfg.AuthMode == "oidc" {
+			token, err = jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) { return oidcKeys.key(c.Request.Context(), token) }, jwt.WithIssuer(cfg.OIDCIssuer), jwt.WithAudience(cfg.OIDCAudience), jwt.WithValidMethods([]string{jwt.SigningMethodRS256.Alg()}))
+		} else {
+			token, err = jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+				if token.Method.Alg() != jwt.SigningMethodHS256.Alg() {
+					return nil, errors.New("unexpected signing method")
+				}
+				return []byte(cfg.JWTSecret), nil
+			}, jwt.WithValidMethods([]string{jwt.SigningMethodHS256.Alg()}))
+		}
 
-		if err != nil || !token.Valid {
+		if err != nil || !token.Valid || claims.EmployeeID <= 0 || claims.UnitID <= 0 {
 			utils.SendError(c, http.StatusUnauthorized, "Invalid or expired token", "")
 			c.Abort()
 			return
@@ -54,8 +64,13 @@ func AuthMiddleware(cfg *config.Config) gin.HandlerFunc {
 // RoleAuthMiddleware checks if user has a required rank level (hierarchy check)
 func RoleAuthMiddleware(maxHierarchyAllowed int) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// Mock rank check logic: can extend based on rank hierarchy in DB
-		// In this template, we allow all authenticated employees by default unless restricted
+		rawClaims, exists := c.Get("claims")
+		claims, ok := rawClaims.(*services.AuthClaims)
+		if !exists || !ok || claims.RankHierarchy <= 0 || claims.RankHierarchy > maxHierarchyAllowed {
+			utils.SendError(c, http.StatusForbidden, "Insufficient role permissions", "")
+			c.Abort()
+			return
+		}
 		c.Next()
 	}
 }

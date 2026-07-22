@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"errors"
 	"strconv"
 	"time"
 
@@ -234,4 +235,38 @@ func fmtAccusedID(id int) string {
 
 func fmtCaseID(id int) string {
 	return "case_" + strconv.Itoa(id)
+}
+
+func (r *AnalyticsRepository) GetCaseIntelligenceRecord(caseID, unitID int) (*models.CaseMaster, error) {
+	var row models.CaseMaster
+	err := r.db.Preload("Complainants").Preload("Victims").Preload("AccusedList").
+		Preload("ActsAssociated").Preload("Arrests").Preload("Chargesheet").Preload("OccuranceTime").
+		Where("CaseMasterID = ? AND PoliceStationID = ?", caseID, unitID).First(&row).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, nil
+	}
+	return &row, err
+}
+
+func (r *AnalyticsRepository) GetCaseDocuments(caseID int) ([]models.CaseDocument, error) {
+	var rows []models.CaseDocument
+	err := r.db.Where("CaseMasterID = ?", caseID).Find(&rows).Error
+	return rows, err
+}
+
+func (r *AnalyticsRepository) GetSimilarCaseCandidates(source *models.CaseMaster, unitID int) ([]models.CaseMaster, error) {
+	var rows []models.CaseMaster
+	from := source.CrimeRegisteredDate.AddDate(-2, 0, 0)
+	err := r.db.Preload("ActsAssociated").Preload("CrimeHead").Preload("CrimeSubHead").
+		Where("PoliceStationID = ? AND CaseMasterID <> ? AND CrimeRegisteredDate >= ?", unitID, source.CaseMasterID, from).
+		Order("CrimeRegisteredDate DESC").Limit(250).Find(&rows).Error
+	return rows, err
+}
+
+func (r *AnalyticsRepository) GetPendingCaseCandidates(unitID, statusID int) ([]models.CaseMaster, error) {
+	var rows []models.CaseMaster
+	err := r.db.Preload("Arrests").Preload("Chargesheet").Preload("CrimeHead").Preload("CrimeSubHead").
+		Where("PoliceStationID = ? AND CaseStatusID = ?", unitID, statusID).
+		Order("CrimeRegisteredDate ASC").Limit(500).Find(&rows).Error
+	return rows, err
 }

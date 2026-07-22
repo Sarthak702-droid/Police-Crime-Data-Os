@@ -1,6 +1,8 @@
 package services_test
 
 import (
+	"crypto/sha256"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -142,7 +144,8 @@ func TestRefreshTokenFlow(t *testing.T) {
 	}
 
 	var rt models.RefreshToken
-	err = db.Where("token = ?", refreshToken).First(&rt).Error
+	refreshDigest := fmt.Sprintf("%x", sha256.Sum256([]byte(refreshToken)))
+	err = db.Where("token = ?", refreshDigest).First(&rt).Error
 	if err != nil {
 		t.Fatalf("refresh token not found in database: %v", err)
 	}
@@ -156,13 +159,14 @@ func TestRefreshTokenFlow(t *testing.T) {
 	}
 
 	var checkRt models.RefreshToken
-	err = db.Where("token = ?", refreshToken).First(&checkRt).Error
+	err = db.Where("token = ?", refreshDigest).First(&checkRt).Error
 	if err == nil {
 		t.Fatal("old refresh token should have been deleted")
 	}
 
 	var checkNewRt models.RefreshToken
-	err = db.Where("token = ?", newRefreshToken).First(&checkNewRt).Error
+	newRefreshDigest := fmt.Sprintf("%x", sha256.Sum256([]byte(newRefreshToken)))
+	err = db.Where("token = ?", newRefreshDigest).First(&checkNewRt).Error
 	if err != nil {
 		t.Fatalf("new refresh token not found in database: %v", err)
 	}
@@ -366,6 +370,7 @@ func checkSubstr(s, substr string) bool {
 }
 
 func TestIntrusionWaf(t *testing.T) {
+	t.Chdir(t.TempDir())
 	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
 	if err != nil {
 		t.Fatalf("failed to open database: %v", err)

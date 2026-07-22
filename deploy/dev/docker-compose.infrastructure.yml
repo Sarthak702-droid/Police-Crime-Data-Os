@@ -1,0 +1,94 @@
+name: police-intelligence-dev
+
+# Local integration environment only. Production requires TLS, external secret
+# management, HA, backups, monitoring and independent security review.
+services:
+  opensearch:
+    image: opensearchproject/opensearch:3.7.0
+    environment:
+      discovery.type: single-node
+      bootstrap.memory_lock: "true"
+      OPENSEARCH_JAVA_OPTS: -Xms512m -Xmx512m
+      DISABLE_INSTALL_DEMO_CONFIG: "true"
+      plugins.security.disabled: "true"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - 127.0.0.1:9200:9200
+    volumes:
+      - opensearch-data:/usr/share/opensearch/data
+    networks: [police-backend]
+
+  minio:
+    image: quay.io/minio/minio:latest
+    command: server /data --console-address :9001
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    ports:
+      - 127.0.0.1:9000:9000
+      - 127.0.0.1:9001:9001
+    volumes:
+      - minio-data:/data
+    networks: [police-backend]
+
+  neo4j:
+    image: neo4j:2026.06.0
+    environment:
+      NEO4J_AUTH: neo4j/${NEO4J_PASSWORD}
+      NEO4J_server_memory_heap_initial__size: 512m
+      NEO4J_server_memory_heap_max__size: 1G
+    ports:
+      - 127.0.0.1:7474:7474
+      - 127.0.0.1:7687:7687
+    volumes:
+      - neo4j-data:/data
+      - neo4j-logs:/logs
+    networks: [police-backend]
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.7.0
+    command: start-dev --import-realm
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_HEALTH_ENABLED: "true"
+      KC_METRICS_ENABLED: "true"
+    ports:
+      - 127.0.0.1:8081:8080
+      - 127.0.0.1:9002:9000
+    volumes:
+      - ./keycloak:/opt/keycloak/data/import:ro
+    networks: [police-backend]
+
+  opa:
+    image: openpolicyagent/opa:1.18.2
+    command: run --server --addr=0.0.0.0:8181 --log-level=info /policies
+    ports:
+      - 127.0.0.1:8181:8181
+    volumes:
+      - ./opa:/policies:ro
+    networks: [police-backend]
+
+  multilingual-e5:
+    image: ${TEI_IMAGE:-ghcr.io/huggingface/text-embeddings-inference:cpu-1.8}
+    command: --model-id intfloat/multilingual-e5-base --port 80
+    profiles: [ai]
+    ports:
+      - 127.0.0.1:8082:80
+    volumes:
+      - embedding-cache:/data
+    networks: [police-backend]
+
+networks:
+  police-backend:
+    driver: bridge
+
+volumes:
+  opensearch-data:
+  minio-data:
+  neo4j-data:
+  neo4j-logs:
+  embedding-cache:

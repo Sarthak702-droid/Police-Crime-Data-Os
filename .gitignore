@@ -1,0 +1,27 @@
+# Credentials and local runtime configuration
+.env
+.env.*
+!.env.example
+!.env.infrastructure.example
+**/.env
+**/.env.*
+!**/.env.example
+!**/.env.infrastructure.example
+
+# Runtime/generated data
+*.log
+*.db
+*.db-shm
+*.db-wal
+*.exe
+exports/
+.gocache/
+.gotelemetry/
+node_modules/
+dist/
+.vite/
+*.tsbuildinfo
+
+# Local infrastructure volumes/config overrides
+deploy/dev/data/
+deploy/dev/docker-compose.override.yml

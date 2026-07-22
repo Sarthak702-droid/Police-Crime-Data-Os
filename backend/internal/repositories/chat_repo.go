@@ -68,3 +68,14 @@ func (r *ChatRepository) GetTurnsBySessionIDForUser(sessionID string, userID int
 		Find(&turns).Error
 	return turns, err
 }
+
+func (r *ChatRepository) AddEvidenceTrail(trail *models.EvidenceTrail) error {
+	return r.db.Create(trail).Error
+}
+
+func (r *ChatRepository) GetEvidenceTrailsForUser(sessionID string, userID int) ([]models.EvidenceTrail, error) {
+	var rows []models.EvidenceTrail
+	err := r.db.Where("SessionID = ? AND UserID = ?", sessionID, userID).
+		Order("CreatedAt ASC").Find(&rows).Error
+	return rows, err
+}

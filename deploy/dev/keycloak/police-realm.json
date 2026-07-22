@@ -1,0 +1,46 @@
+{
+  "realm": "police-intelligence",
+  "enabled": true,
+  "registrationAllowed": false,
+  "resetPasswordAllowed": true,
+  "bruteForceProtected": true,
+  "roles": {
+    "realm": [
+      {"name": "investigator"},
+      {"name": "supervisor"},
+      {"name": "admin"}
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "crime-api",
+      "name": "Crime Intelligence API",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "defaultClientScopes": ["web-origins", "acr", "roles", "profile", "email", "police-context"],
+      "redirectUris": ["http://localhost:3000/*"],
+      "webOrigins": ["http://localhost:3000"]
+    }
+  ],
+  "clientScopes": [
+    {
+      "name": "police-context",
+      "description": "Server-enforced employee and organisational claims",
+      "protocol": "openid-connect",
+      "attributes": {"include.in.token.scope": "true", "display.on.consent.screen": "false"},
+      "protocolMappers": [
+        {"name":"crime-api-audience","protocol":"openid-connect","protocolMapper":"oidc-audience-mapper","consentRequired":false,"config":{"included.client.audience":"crime-api","id.token.claim":"false","access.token.claim":"true"}},
+        {"name":"employee-id","protocol":"openid-connect","protocolMapper":"oidc-usermodel-attribute-mapper","consentRequired":false,"config":{"user.attribute":"employee_id","claim.name":"employee_id","jsonType.label":"int","id.token.claim":"true","access.token.claim":"true","userinfo.token.claim":"true"}},
+        {"name":"kgid","protocol":"openid-connect","protocolMapper":"oidc-usermodel-attribute-mapper","consentRequired":false,"config":{"user.attribute":"kgid","claim.name":"kgid","jsonType.label":"String","id.token.claim":"true","access.token.claim":"true","userinfo.token.claim":"true"}},
+        {"name":"unit-id","protocol":"openid-connect","protocolMapper":"oidc-usermodel-attribute-mapper","consentRequired":false,"config":{"user.attribute":"unit_id","claim.name":"unit_id","jsonType.label":"int","id.token.claim":"true","access.token.claim":"true","userinfo.token.claim":"true"}},
+        {"name":"district-id","protocol":"openid-connect","protocolMapper":"oidc-usermodel-attribute-mapper","consentRequired":false,"config":{"user.attribute":"district_id","claim.name":"district_id","jsonType.label":"int","id.token.claim":"true","access.token.claim":"true","userinfo.token.claim":"true"}},
+        {"name":"rank","protocol":"openid-connect","protocolMapper":"oidc-usermodel-attribute-mapper","consentRequired":false,"config":{"user.attribute":"rank","claim.name":"rank","jsonType.label":"String","id.token.claim":"true","access.token.claim":"true","userinfo.token.claim":"true"}},
+        {"name":"rank-hierarchy","protocol":"openid-connect","protocolMapper":"oidc-usermodel-attribute-mapper","consentRequired":false,"config":{"user.attribute":"rank_hierarchy","claim.name":"rank_hierarchy","jsonType.label":"int","id.token.claim":"true","access.token.claim":"true","userinfo.token.claim":"true"}},
+        {"name":"designation","protocol":"openid-connect","protocolMapper":"oidc-usermodel-attribute-mapper","consentRequired":false,"config":{"user.attribute":"designation","claim.name":"designation","jsonType.label":"String","id.token.claim":"true","access.token.claim":"true","userinfo.token.claim":"true"}}
+      ]
+    }
+  ]
+}
